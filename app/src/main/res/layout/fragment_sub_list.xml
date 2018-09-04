@@ -9,4 +9,9 @@
         android:id="@+id/create_new_sub_btn"
         android:text="Add Subscription"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/testing"/>
+
 </LinearLayout>
