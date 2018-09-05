@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -24,7 +23,7 @@ public class SubListFragment extends Fragment {
     AppDatabase db;
     View v;
     private ArrayList<String> itemTexts;
-    private ArrayList<String> imageUrls;
+    private ArrayList<String> itemCategories;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,13 +60,13 @@ public class SubListFragment extends Fragment {
         List<Subscription> subList = db.subscriptionDao().getAll();
 
         itemTexts = new ArrayList<>();
-        imageUrls = new ArrayList<>();
+        itemCategories = new ArrayList<>();
 
         for(Subscription item : subList){
             itemTexts.add(item.getName());
             String freqency = item.getFrequency();
             //TODO: change image based on frequency
-            imageUrls.add("https://en.wikipedia.org/wiki/Smiley#/media/File:Breathe-face-smile.svg");
+            itemCategories.add(freqency);
         }
 
         initRecyclerView();
@@ -75,7 +74,7 @@ public class SubListFragment extends Fragment {
 
     private void initRecyclerView(){
         RecyclerView recyclerView = v.findViewById(R.id.recyclerView);
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(itemTexts, imageUrls, getContext());
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(itemTexts, itemCategories, getContext());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     }

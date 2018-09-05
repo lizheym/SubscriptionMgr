@@ -1,6 +1,8 @@
 package personal.subscriptionmgr;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -23,12 +25,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private static final String TAG = "RecyclerViewAdapter";
 
     private ArrayList<String> itemTexts = new ArrayList<>();
-    private ArrayList<String> images = new ArrayList<>();
+    private ArrayList<String> itemCategories = new ArrayList<>();
     private Context context;
 
-    public RecyclerViewAdapter(ArrayList<String> itemTexts, ArrayList<String> images, Context context) {
+    public RecyclerViewAdapter(ArrayList<String> itemTexts, ArrayList<String> itemCategories, Context context) {
         this.itemTexts = itemTexts;
-        this.images = images;
+        this.itemCategories = itemCategories;
         this.context = context;
     }
 
@@ -43,7 +45,23 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder called.");
-        Glide.with(context).asBitmap().load(images.get(position)).into(holder.image);
+
+        //TODO: different cases for different categories
+        String category = itemCategories.get(position);
+        if(category == "weekly"){
+            Bitmap bm = BitmapFactory.decodeResource(context.getResources(), R.drawable.smiley);
+            holder.image.setImageBitmap(bm);
+        }else if(category == "monthly"){
+            Bitmap bm = BitmapFactory.decodeResource(context.getResources(), R.drawable.smiley);
+            holder.image.setImageBitmap(bm);
+        }else if(category == "annual"){
+            Bitmap bm = BitmapFactory.decodeResource(context.getResources(), R.drawable.smiley);
+            holder.image.setImageBitmap(bm);
+        }else{
+            Bitmap bm = BitmapFactory.decodeResource(context.getResources(), R.drawable.smiley);
+            holder.image.setImageBitmap(bm);
+        }
+
         holder.text.setText(itemTexts.get(position));
 
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
