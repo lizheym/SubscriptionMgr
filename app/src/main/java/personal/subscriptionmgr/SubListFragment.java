@@ -4,6 +4,8 @@ import android.arch.persistence.room.Room;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,12 +13,18 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Liz on 9/4/2018.
  */
 
 public class SubListFragment extends Fragment {
     AppDatabase db;
+    View v;
+    private ArrayList<String> itemTexts;
+    private ArrayList<String> imageUrls;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -26,15 +34,9 @@ public class SubListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_sub_list, container, false);
+        v = inflater.inflate(R.layout.fragment_sub_list, container, false);
 
         db = Room.databaseBuilder(getActivity().getApplicationContext(), AppDatabase.class, "subscription").allowMainThreadQueries().build();
-
-        TextView testView = v.findViewById(R.id.testing);
-        Subscription sub = db.subscriptionDao().findByName("Spotify");
-        if(sub!=null){
-            testView.setText("Found");
-        }
 
         Button restartButton = v.findViewById(R.id.create_new_sub_btn);
         restartButton.setOnClickListener(new View.OnClickListener() {
@@ -50,6 +52,31 @@ public class SubListFragment extends Fragment {
             }
         });
 
+        populate();
+
         return v;
+    }
+
+    private void populate(){
+        List<Subscription> subList = db.subscriptionDao().getAll();
+
+        itemTexts = new ArrayList<>();
+        imageUrls = new ArrayList<>();
+
+        for(Subscription item : subList){
+            itemTexts.add(item.getName());
+            String freqency = item.getFrequency();
+            //TODO: change image based on frequency
+            imageUrls.add("https://en.wikipedia.org/wiki/Smiley#/media/File:Breathe-face-smile.svg");
+        }
+
+        initRecyclerView();
+    }
+
+    private void initRecyclerView(){
+        RecyclerView recyclerView = v.findViewById(R.id.recyclerView);
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(itemTexts, imageUrls, getContext());
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 }
