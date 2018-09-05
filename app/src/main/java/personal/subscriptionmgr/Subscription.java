@@ -18,17 +18,17 @@ public class Subscription {
     @ColumnInfo(name = "category")
     private String category;
 
-    @ColumnInfo(name = "frequency")
-    private String frequency;
-
-    //only applicable for annual subscriptions - otherwise will be 0
+    // only applicable for annual subscriptions - otherwise will be 0
     @ColumnInfo(name = "charge_month")
-    private int chargeMonth;
+    private String chargeMonth;
 
-    //day of the week 1-7 for weekly or day of the month for monthly/annual
-    //if daily subscription, value is 0
-    @ColumnInfo(name = "charge_day")
-    private int chargeDay;
+    // 1 to 31 (if weekly, value is 0)
+    @ColumnInfo(name = "charge_day_of_month")
+    private int chargeDayOfMonth;
+
+    // Sunday .. Saturday (if annual or monthly, value is "0")
+    @ColumnInfo(name = "charge_day_of_week")
+    private String chargeDayOfWeek;
 
     @ColumnInfo(name = "cost")
     private double cost;
@@ -55,28 +55,28 @@ public class Subscription {
         this.category = category;
     }
 
-    public String getFrequency() {
-        return frequency;
-    }
-
-    public void setFrequency(String frequency) {
-        this.frequency = frequency;
-    }
-
-    public int getChargeMonth() {
+    public String getChargeMonth() {
         return chargeMonth;
     }
 
-    public void setChargeMonth(int chargeMonth) {
+    public void setChargeMonth(String chargeMonth) {
         this.chargeMonth = chargeMonth;
     }
 
-    public int getChargeDay() {
-        return chargeDay;
+    public int getChargeDayOfMonth() {
+        return chargeDayOfMonth;
     }
 
-    public void setChargeDay(int chargeDay) {
-        this.chargeDay = chargeDay;
+    public void setChargeDayOfMonth(int chargeDayOfMonth) {
+        this.chargeDayOfMonth = chargeDayOfMonth;
+    }
+
+    public String getChargeDayOfWeek() {
+        return chargeDayOfWeek;
+    }
+
+    public void setChargeDayOfWeek(String chargeDayOfWeek) {
+        this.chargeDayOfWeek = chargeDayOfWeek;
     }
 
     public double getCost() {

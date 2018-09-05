@@ -29,6 +29,10 @@ public class AddSubFragment extends Fragment {
     private Spinner dayOfMonthSpinner;
     private Spinner dayOfWeekSpinner;
     private Button addToDbBtn;
+    private String category;
+    private String chargeMonth;
+    private int chargeDayOfMonth;
+    private String chargeDayOfWeek;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,8 +60,8 @@ public class AddSubFragment extends Fragment {
 
         //set adapters for spinners
         ArrayAdapter<CharSequence> categoryAdapter = ArrayAdapter.createFromResource(getContext(), R.array.category_array, android.R.layout.simple_spinner_item);
-        ArrayAdapter<CharSequence> monthAdapter = ArrayAdapter.createFromResource(getContext(), R.array.month_array, android.R.layout.simple_spinner_item);
-        ArrayAdapter<CharSequence> dayOfMonthAdapter = ArrayAdapter.createFromResource(getContext(), R.array.day_of_month_array, android.R.layout.simple_spinner_item);
+        final ArrayAdapter<CharSequence> monthAdapter = ArrayAdapter.createFromResource(getContext(), R.array.month_array, android.R.layout.simple_spinner_item);
+        final ArrayAdapter<CharSequence> dayOfMonthAdapter = ArrayAdapter.createFromResource(getContext(), R.array.day_of_month_array, android.R.layout.simple_spinner_item);
         ArrayAdapter<CharSequence> dayOfWeekAdapter = ArrayAdapter.createFromResource(getContext(), R.array.day_of_week_array, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -70,46 +74,150 @@ public class AddSubFragment extends Fragment {
         dayOfMonthSpinner.setAdapter(dayOfMonthAdapter);
         dayOfWeekSpinner.setAdapter(dayOfWeekAdapter);
 
-        /*categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                // your code here
+                int index = parentView.getSelectedItemPosition();
+                //annual
+                if(index == 0){
+                    category = "annual";
+                    monthSpinner.setVisibility(View.VISIBLE);
+                    dayOfMonthSpinner.setVisibility(View.VISIBLE);
+                    dayOfWeekSpinner.setVisibility(View.INVISIBLE);
+                }
+                //monthly
+                else if(index == 1){
+                    category = "monthly";
+                    monthSpinner.setVisibility(View.INVISIBLE);
+                    dayOfMonthSpinner.setVisibility(View.VISIBLE);
+                    dayOfWeekSpinner.setVisibility(View.INVISIBLE);
+                }
+                //weekly
+                else if(index == 2){
+                    category = "weekly";
+                    monthSpinner.setVisibility(View.INVISIBLE);
+                    dayOfMonthSpinner.setVisibility(View.INVISIBLE);
+                    dayOfWeekSpinner.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
-                // your code here
+                monthSpinner.setVisibility(View.INVISIBLE);
+                dayOfMonthSpinner.setVisibility(View.INVISIBLE);
+                dayOfWeekSpinner.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        monthSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                int index = parentView.getSelectedItemPosition();
+                chargeMonth = getActivity().getResources().getStringArray(R.array.month_array)[index];
             }
 
-        });*/
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+
+            }
+        });
+
+        dayOfMonthSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                int index = parentView.getSelectedItemPosition();
+                chargeDayOfMonth = Integer.parseInt(getActivity().getResources().getStringArray(R.array.day_of_month_array)[index]);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+
+            }
+        });
+
+        dayOfWeekSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                int index = parentView.getSelectedItemPosition();
+                chargeDayOfWeek = getActivity().getResources().getStringArray(R.array.day_of_week_array)[index];
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+
+            }
+        });
 
         addToDbBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Subscription newSub = new Subscription();
+                String name = subNameField.getText().toString();
+                String costString = subCostField.getText().toString();
+                String notificationString = subNotifyField.getText().toString();
+                String email = subEmailField.getText().toString();
 
-                newSub.setName(subNameField.getText().toString());
-                newSub.setCategory("Music");
-                newSub.setFrequency("Monthly");
-                newSub.setChargeMonth(0);
-                newSub.setChargeDay(12);
-                newSub.setCost(12.99);
-                newSub.setEmail("lizizzle27@gmail.com");
-                newSub.setNotification(2);
+                if(name.length() == 0 || costString.length() == 0 || notificationString.length() == 0 || email.length() == 0){
+                    Toast.makeText(getActivity(), "Must enter all information", Toast.LENGTH_LONG).show();
+                }else if(!isDouble(costString)){
+                    Toast.makeText(getActivity(), "Cost must be in #.## format", Toast.LENGTH_LONG).show();
+                }else if(!isInt(notificationString)){
+                    Toast.makeText(getActivity(), "\"Days in advance of charge to notify\" must be an integer", Toast.LENGTH_LONG).show();
+                }else if(db.subscriptionDao().findByName(name) != null){
+                    Toast.makeText(getActivity(), "Entry for this service already exists.", Toast.LENGTH_LONG).show();
+                }else{
+                    newSub.setName(name);
+                    Double cost = Double.parseDouble(subCostField.getText().toString());
+                    int notification = Integer.parseInt(subNotifyField.getText().toString());
+                    newSub.setCategory(category);
+                    //TODO: change category to ENUM
+                    if (category == "annual") {
+                        newSub.setChargeMonth(chargeMonth);
+                        newSub.setChargeDayOfMonth(chargeDayOfMonth);
+                        newSub.setChargeDayOfWeek("0");
+                    } else if (category == "monthly") {
+                        newSub.setChargeMonth("0");
+                        newSub.setChargeDayOfMonth(chargeDayOfMonth);
+                        newSub.setChargeDayOfWeek("0");
+                    } else if (category == "weekly") {
+                        newSub.setChargeMonth("0");
+                        newSub.setChargeDayOfMonth(0);
+                        newSub.setChargeDayOfWeek(chargeDayOfWeek);
+                    }
 
-                db.subscriptionDao().insertAll(newSub);
+                    newSub.setCost(cost);
+                    newSub.setNotification(notification);
+                    newSub.setEmail(email);
 
-                //Replace self fragment with SubListFragment
-                SubListFragment newFragment = new SubListFragment();
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, newFragment);
-                transaction.commit();
+                    db.subscriptionDao().insertAll(newSub);
 
-                //TODO: remove (for testing)
-                Toast.makeText(getActivity(), "Pressed button", Toast.LENGTH_LONG).show();
+                    //Replace self fragment with SubListFragment
+                    SubListFragment newFragment = new SubListFragment();
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                    transaction.replace(R.id.fragment_container, newFragment);
+                    transaction.commit();
+                }
             }
         });
 
         return v;
+    }
+
+    public boolean isDouble( String str ){
+        try {
+            Double.parseDouble(str);
+            return true;
+        }catch( Exception e ){
+                return false;
+        }
+    }
+
+    public boolean isInt( String str ){
+        try {
+            Integer.parseInt(str);
+            return true;
+        }catch( Exception e ){
+                return false;
+        }
     }
 }

@@ -41,8 +41,6 @@ public class SubListFragment extends Fragment {
         restartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getActivity(), "Pressed button", Toast.LENGTH_LONG).show();
-
                 //Replace self fragment with AddSubFragment
                 AddSubFragment newFragment = new AddSubFragment();
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -64,9 +62,9 @@ public class SubListFragment extends Fragment {
 
         for(Subscription item : subList){
             itemTexts.add(item.getName());
-            String freqency = item.getFrequency();
+            String category = item.getCategory();
             //TODO: change image based on frequency
-            itemCategories.add(freqency);
+            itemCategories.add(category);
         }
 
         initRecyclerView();
