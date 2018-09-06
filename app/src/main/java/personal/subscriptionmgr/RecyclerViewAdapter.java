@@ -76,7 +76,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 args.putString("name", itemName);
                 newFragment.setArguments(args);
                 FragmentTransaction transaction = ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction();
-                //transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
+                transaction.setCustomAnimations(R.anim.in_from_left, R.anim.out_to_left);
                 transaction.replace(R.id.fragment_container, newFragment);
                 transaction.commit();
             }
