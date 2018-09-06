@@ -24,7 +24,7 @@ public class Subscription {
 
     // 1 to 31 (if weekly, value is 0)
     @ColumnInfo(name = "charge_day_of_month")
-    private int chargeDayOfMonth;
+    private String chargeDayOfMonth;
 
     // Sunday .. Saturday (if annual or monthly, value is "0")
     @ColumnInfo(name = "charge_day_of_week")
@@ -34,7 +34,7 @@ public class Subscription {
     private double cost;
 
     @ColumnInfo(name = "notification")
-    private int notification;
+    private String notification;
 
     @ColumnInfo(name = "email")
     private String email;
@@ -63,11 +63,11 @@ public class Subscription {
         this.chargeMonth = chargeMonth;
     }
 
-    public int getChargeDayOfMonth() {
+    public String getChargeDayOfMonth() {
         return chargeDayOfMonth;
     }
 
-    public void setChargeDayOfMonth(int chargeDayOfMonth) {
+    public void setChargeDayOfMonth(String chargeDayOfMonth) {
         this.chargeDayOfMonth = chargeDayOfMonth;
     }
 
@@ -87,11 +87,11 @@ public class Subscription {
         this.cost = cost;
     }
 
-    public int getNotification() {
+    public String getNotification() {
         return notification;
     }
 
-    public void setNotification(int notification) {
+    public void setNotification(String notification) {
         this.notification = notification;
     }
 

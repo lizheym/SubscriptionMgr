@@ -1,9 +1,13 @@
 package personal.subscriptionmgr;
 
+import android.app.Activity;
+import android.support.v4.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,9 +16,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.bumptech.glide.Glide;
-
 import java.util.ArrayList;
 
 /**
@@ -43,7 +44,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder called.");
 
         //TODO: different cases for different categories
@@ -67,7 +68,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: start new activity
+                String itemName = holder.text.getText().toString();
+
+                // start new fragment
+                SingleSubFragment newFragment = new SingleSubFragment();
+                Bundle args = new Bundle();
+                args.putString("name", itemName);
+                newFragment.setArguments(args);
+                FragmentTransaction transaction = ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction();
+                //transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
+                transaction.replace(R.id.fragment_container, newFragment);
+                transaction.commit();
             }
         });
     }
@@ -82,6 +93,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         ImageView image;
         TextView text;
         RelativeLayout parentLayout;
+
 
         public ViewHolder(View itemView) {
             super(itemView);

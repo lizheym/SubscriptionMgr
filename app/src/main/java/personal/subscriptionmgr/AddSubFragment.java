@@ -31,7 +31,7 @@ public class AddSubFragment extends Fragment {
     private Button addToDbBtn;
     private String category;
     private String chargeMonth;
-    private int chargeDayOfMonth;
+    private String chargeDayOfMonth;
     private String chargeDayOfWeek;
 
     @Override
@@ -103,6 +103,7 @@ public class AddSubFragment extends Fragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
+                category = "annual";
                 monthSpinner.setVisibility(View.INVISIBLE);
                 dayOfMonthSpinner.setVisibility(View.INVISIBLE);
                 dayOfWeekSpinner.setVisibility(View.INVISIBLE);
@@ -118,7 +119,7 @@ public class AddSubFragment extends Fragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
-
+                chargeMonth = "January";
             }
         });
 
@@ -126,12 +127,12 @@ public class AddSubFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 int index = parentView.getSelectedItemPosition();
-                chargeDayOfMonth = Integer.parseInt(getActivity().getResources().getStringArray(R.array.day_of_month_array)[index]);
+                chargeDayOfMonth = getActivity().getResources().getStringArray(R.array.day_of_month_array)[index];
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
-
+                chargeDayOfMonth = "1";
             }
         });
 
@@ -144,7 +145,7 @@ public class AddSubFragment extends Fragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
-
+                chargeDayOfWeek = "Sunday";
             }
         });
 
@@ -157,6 +158,7 @@ public class AddSubFragment extends Fragment {
                 String notificationString = subNotifyField.getText().toString();
                 String email = subEmailField.getText().toString();
 
+                //first, check to see if all fields have been filled, and in the correct format
                 if(name.length() == 0 || costString.length() == 0 || notificationString.length() == 0 || email.length() == 0){
                     Toast.makeText(getActivity(), "Must enter all information", Toast.LENGTH_LONG).show();
                 }else if(!isDouble(costString)){
@@ -167,8 +169,7 @@ public class AddSubFragment extends Fragment {
                     Toast.makeText(getActivity(), "Entry for this service already exists.", Toast.LENGTH_LONG).show();
                 }else{
                     newSub.setName(name);
-                    Double cost = Double.parseDouble(subCostField.getText().toString());
-                    int notification = Integer.parseInt(subNotifyField.getText().toString());
+                    Double cost = Double.parseDouble(costString);
                     newSub.setCategory(category);
                     //TODO: change category to ENUM
                     if (category == "annual") {
@@ -181,12 +182,12 @@ public class AddSubFragment extends Fragment {
                         newSub.setChargeDayOfWeek("0");
                     } else if (category == "weekly") {
                         newSub.setChargeMonth("0");
-                        newSub.setChargeDayOfMonth(0);
+                        newSub.setChargeDayOfMonth("0");
                         newSub.setChargeDayOfWeek(chargeDayOfWeek);
                     }
 
                     newSub.setCost(cost);
-                    newSub.setNotification(notification);
+                    newSub.setNotification(notificationString);
                     newSub.setEmail(email);
 
                     db.subscriptionDao().insertAll(newSub);
