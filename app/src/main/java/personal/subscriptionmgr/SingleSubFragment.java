@@ -22,6 +22,8 @@ public class SingleSubFragment extends Fragment {
     TextView notificationInfoView;
     TextView emailInfoView;
     Button backToListButton;
+    Button deleteButton;
+    Subscription sub;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +43,9 @@ public class SingleSubFragment extends Fragment {
         notificationInfoView = v.findViewById(R.id.sub_notification_info);
         emailInfoView = v.findViewById(R.id.sub_email_info);
         backToListButton = v.findViewById(R.id.back_to_list_btn);
+        deleteButton = v.findViewById(R.id.delete_sub_btn);
+
+        sub = db.subscriptionDao().findByName(subName);
 
         backToListButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,7 +59,19 @@ public class SingleSubFragment extends Fragment {
             }
         });
 
-        Subscription sub = db.subscriptionDao().findByName(subName);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //delete from db
+                db.subscriptionDao().delete(sub);
+                //Replace self fragment with SubListFragment
+                SubListFragment newFragment = new SubListFragment();
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.setCustomAnimations(R.anim.in_from_left, R.anim.out_to_left);
+                transaction.replace(R.id.fragment_container, newFragment);
+                transaction.commit();
+            }
+        });
 
         nameView.setText(subName);
         String category = sub.getCategory();
