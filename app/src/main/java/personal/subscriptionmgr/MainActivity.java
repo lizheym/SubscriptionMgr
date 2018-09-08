@@ -49,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
                     transaction.commit();
                     statsButton.setText("Show stats");
                 }
-
             }
         });
 

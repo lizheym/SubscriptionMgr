@@ -61,18 +61,16 @@ public class SingleSubFragment extends Fragment {
         String chargeMonth = sub.getChargeMonth();
         String chargeDOMonth = sub.getChargeDayOfMonth();
         String chargeDOWeek = sub.getChargeDayOfWeek();
-        String cost = String.valueOf(sub.getCost());
+        Double cost = sub.getCost();
         String notification = sub.getNotification();
         String email = sub.getEmail();
 
-        Toast.makeText(getActivity(), category, Toast.LENGTH_LONG).show();
-
         if (category.equals("annual")) {
-            chargeInfoView.setText("Charges $" + cost + " annually on " + chargeMonth + " " + chargeDOMonth);
+            chargeInfoView.setText("Charges $" + String.format("%.2f", cost) + " annually on " + chargeMonth + " " + chargeDOMonth);
         }else if(category.equals("monthly")) {
-            chargeInfoView.setText("Charges $" + cost + " monthly on " + chargeDOMonth + " of the month.");
+            chargeInfoView.setText("Charges $" + String.format("%.2f", cost) + " monthly on " + chargeDOMonth + " of the month.");
         }else if(category.equals("weekly")){
-            chargeInfoView.setText("Charges $" + cost + " weekly on " + chargeDOWeek);
+            chargeInfoView.setText("Charges $" + String.format("%.2f", cost) + " weekly on " + chargeDOWeek);
         }
 
         notificationInfoView.setText("App will notify you " + notification + " days in advance of charge.");
